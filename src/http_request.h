@@ -132,7 +132,7 @@ namespace tms {
         {}
 
         http_request_t(http_verb method, http_string target, std::string data, handler_type h)
-            : request(method, std::move(target), 11), std::move(data), handler(std::move(h))
+            : request(method, std::move(target), std::move(data), 11), handler(std::move(h))
         {}
 
         virtual const http_string get(http_string key) {
@@ -145,7 +145,6 @@ namespace tms {
 
         // ugly write with ugly stream
         virtual void write(http_stream& stream, process_handler_type handler) {
-            
 
 #ifndef ASIO_POOL_HTTPS_IGNORE
             if (stream.ssl) {

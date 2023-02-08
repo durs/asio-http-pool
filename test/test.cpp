@@ -36,7 +36,7 @@ void create_request() {
     static std::atomic<int> reqnum = 0;
     static auto targets_count = sizeof(targets) / sizeof(targets[0]);
     auto target = targets[reqnum++ % targets_count];
-    uri_view uri;
+    uri_t<char, http_string> uri;
     uri.set_defaults("http", "localhost");
     uri.parse(target);
     
@@ -67,7 +67,6 @@ void create_request() {
         else {
             std::chrono::duration<double> tm = std::chrono::system_clock::now() - time;
             auto &body = resp.body();
-            auto data = body.data();
             auto size = body.size();
             std::cout << " body[len: " << size << "]"
                 << " at " << (int)(tm.count() * 1000) << "ms";

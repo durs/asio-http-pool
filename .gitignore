@@ -33,4 +33,5 @@
 
 #test
 test/.vs
-test/x64
+test/build/*
+build/*

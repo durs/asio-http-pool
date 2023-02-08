@@ -41,21 +41,45 @@ namespace tms {
     //---------------------------------------------------------------------------------------------
     // URI parsing/split template class
 
+    template<typename char_type> struct uri_tags {
+        using string = std::basic_string<char_type, std::char_traits<char_type>, std::allocator<char_type> >;
+        static const string empty;
+        static const string https;
+        static const string p443;
+        static const string p80;
+    };
+
+    template<> const std::string uri_tags<char>::empty("");
+    template<> const std::string uri_tags<char>::https("https");
+    template<> const std::string uri_tags<char>::p443("443");
+    template<> const std::string uri_tags<char>::p80("p80");
+
+    template<> const std::wstring uri_tags<wchar_t>::empty(L"");
+    template<> const std::wstring uri_tags<wchar_t>::https(L"https");
+    template<> const std::wstring uri_tags<wchar_t>::p443(L"443");
+    template<> const std::wstring uri_tags<wchar_t>::p80(L"p80");
+
     template <
         typename char_type, 
         typename string_type = basic_string_view<char_type>
     >
     struct uri_t {
-        using std_string = std::basic_string<char_type, std::char_traits<char_type> >;
-        static const std_string https, p443, p80;
-        static const string_type nstr;
+        using tags = uri_tags<char_type>;
 
         string_type scheme;
         string_type host, port;
         string_type user, pswd;
         string_type fullpath, path, args;
 
-        void set_defaults(string_type _scheme = nstr, string_type _host = nstr, string_type _port = nstr, string_type _user = nstr, string_type _pswd = nstr, string_type _path = nstr, string_type _args = nstr) {
+        void set_defaults(
+            string_type _scheme = tags::empty, 
+            string_type _host = tags::empty, 
+            string_type _port = tags::empty, 
+            string_type _user = tags::empty, 
+            string_type _pswd = tags::empty, 
+            string_type _path = tags::empty, 
+            string_type _args = tags::empty
+        ) {
             if (scheme.empty()) scheme = std::move(_scheme);
             if (host.empty()) host = std::move(_host);
             if (user.empty()) user = std::move(_user);
@@ -64,8 +88,8 @@ namespace tms {
             if (args.empty()) args = std::move(_args);
             if (port.empty()) {
                 if (!_port.empty()) port = std::move(_port);
-                else if (scheme == https) port = p443;
-                else port = p80;
+                else if (scheme == tags::https) port = tags::p443;
+                else port = tags::p80;
             }
         }
 
@@ -192,19 +216,6 @@ namespace tms {
             };
         }
     };
-
-    // declare uri_t::nstr template constant
-    template<typename char_type, typename string_type>
-    const string_type uri_t<char_type, string_type>::nstr;
-
-    // declare uri_t template string constants
-    // whats the fuck? how to do it?
-    template<> const std::string uri_t<char>::https("https");
-    template<> const std::wstring uri_t<wchar_t>::https(L"https");
-    template<> const std::string uri_t<char>::p443("443");
-    template<> const std::wstring uri_t<wchar_t>::p443(L"443");
-    template<> const std::string uri_t<char>::p80("80");
-    template<> const std::wstring uri_t<wchar_t>::p80(L"80");
 
     // declare common specificated uri_t template types
     typedef uri_t<char, string_view> uri_view;

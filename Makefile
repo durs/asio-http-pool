@@ -4,7 +4,7 @@ endif
 
 OUTDIR = bin
 SRCDIR = src
-TESTDIR = src
+TESTDIR = test
 LIBDIRS = /usr/lib/x86_64-linux-gnu
 LIBS = boost_date_time
 LIBS += boost_asio boost_beast
@@ -24,7 +24,7 @@ endif
 CC = cc
 CXX = g++
 CFLAGS = -c -Wall -Wno-unused-function
-CPPFLAGS = -fexceptions
+CPPFLAGS = -std=c++17 -fexceptions
 LDFLAGS = -pthread -lrt 
 LDFLAGS += $(addprefix -l, $(LIBS))
 DEFS = $(addprefix -D, $(DEFINES))
@@ -67,12 +67,18 @@ D_CFLAGS = -g -O0 -DDEBUG
 # declare rules
 
 all: release
-rebuild: clean all
-release:
-	@mkdir -p $(R_OUTDIR)/$(SRCDIR) $(foreach DIR, $(DIRS), $(addprefix $(R_OUTDIR)/, ${DIR}))
 
-debug:
-	@mkdir -p $(D_OUTDIR)/$(SRCDIR) $(foreach DIR, $(DIRS), $(addprefix $(D_OUTDIR)/, ${DIR}))
+rebuild: clean all
+
+release: prepare_release ${R_TARGET}
+
+debug: prepare_debug ${D_TARGET}
+
+prepare_release:
+	@mkdir -p $(R_OUTDIR)/$(SRCDIR)
+
+prepare_debug:
+	@mkdir -p $(D_OUTDIR)/$(SRCDIR)
 
 clean:
 	rm -r $(OUTDIR)
@@ -89,14 +95,14 @@ $(D_TARGET): $(D_OBJS) $(D_OBJC)
 # compile release object files
 ${R_OUTDIR}/$(SRCDIR)/%.opp: $(SRCDIR)/%.cpp
 	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
-${R_OUTDIR}/$(SRCDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -o $@ $(CFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+${R_OUTDIR}/$(TESTDIR)/%.opp: $(TESTDIR)/%.cpp
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
 
 # compile debug object files
 ${D_OUTDIR}/$(SRCDIR)/%.opp: ${SRCDIR}/%.cpp
 	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
-${D_OUTDIR}/$(SRCDIR)/%.o: ${SRCDIR}/%.c
-	$(CC) -o $@ $(CFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+${D_OUTDIR}/$(TESTDIR)/%.opp: ${TESTDIR}/%.cpp
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
 
 # release precompiled headers (not used)
 ${SRCDIR}/%.h.gch: ${SRCDIR}/%.h
