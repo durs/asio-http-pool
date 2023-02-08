@@ -4,7 +4,10 @@
 
 #include <iostream>
 
+#ifndef ASIO_POOL_HTTPS_IGNORE
 #define ASIO_POOL_HTTPS_IGNORE
+#endif
+
 #include "../src/http_pool.h"
 
 #if (_WIN32 || _WIN64)
@@ -32,14 +35,15 @@ static const std::string targets[] = {
 };
 
 void create_request() {
-    static std::atomic<int> reqcnt = 0;
-    static std::atomic<int> reqnum = 0;
+    static std::atomic<int> reqcnt(0);
+    static std::atomic<int> reqnum(0);
     static auto targets_count = sizeof(targets) / sizeof(targets[0]);
     auto target = targets[reqnum++ % targets_count];
     uri_t<char, http_string> uri;
     uri.set_defaults("http", "localhost");
     uri.parse(target);
-    
+    auto uristr = uri.str();
+
     optional<https_method> https;
     if (uri.scheme == "https") {
 #ifndef ASIO_POOL_HTTPS_IGNORE
@@ -49,29 +53,31 @@ void create_request() {
     
     reqcnt++;
     auto time = std::chrono::system_clock::now();
-    pool.enqueue<http_string_body>(uri.host, uri.port, uri.fullpath, https, [time](http_error err, http_stage stage, http_string_response&& resp) {
-        auto stats = pool.get_stats();
-        std::cout << "["
-            << "queue: " << --reqcnt << "/" << stats.queue_size << "; "
-            << "connects: " << stats.active_count << "/" << (stats.active_count + stats.inactive_count) << "; "
-            << (int)stats.bandwidth << " byte/s]";
-
-        std::cout << " http ";
+    pool.enqueue<http_string_body>(uri.host, uri.port, uri.fullpath, https, [time, uristr](http_error err, http_stage stage, http_string_response&& resp) {
+        
+        std::cout << ">>> " + uristr << std::endl;
+        
+        std::cout << "    http ";
         if (stage >= http_stage_read) {
             std::cout << resp.result_int() << " " << resp.result();
         }
         if (err) {
             std::cout << " error[" << err << "] " << err.message();
-            
+
         }
         else {
             std::chrono::duration<double> tm = std::chrono::system_clock::now() - time;
-            auto &body = resp.body();
+            auto& body = resp.body();
             auto size = body.size();
             std::cout << " body[len: " << size << "]"
                 << " at " << (int)(tm.count() * 1000) << "ms";
         }
+        std::cout << std::endl;
 
+        auto stats = pool.get_stats();
+        std::cout << "    queue: " << --reqcnt << "/" << stats.queue_size 
+            << "; connects: " << stats.active_count << "/" << (stats.active_count + stats.inactive_count) 
+            << "; " << (int)stats.bandwidth << " byte/s]";
         std::cout << std::endl;
     });
 };

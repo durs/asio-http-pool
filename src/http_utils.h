@@ -52,12 +52,12 @@ namespace tms {
     template<> const std::string uri_tags<char>::empty("");
     template<> const std::string uri_tags<char>::https("https");
     template<> const std::string uri_tags<char>::p443("443");
-    template<> const std::string uri_tags<char>::p80("p80");
+    template<> const std::string uri_tags<char>::p80("80");
 
     template<> const std::wstring uri_tags<wchar_t>::empty(L"");
     template<> const std::wstring uri_tags<wchar_t>::https(L"https");
     template<> const std::wstring uri_tags<wchar_t>::p443(L"443");
-    template<> const std::wstring uri_tags<wchar_t>::p80(L"p80");
+    template<> const std::wstring uri_tags<wchar_t>::p80(L"80");
 
     template <
         typename char_type, 
