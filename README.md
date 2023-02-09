@@ -51,15 +51,19 @@ This code is part of the TMS software.
  * C++14, C++17 or higher
  * Boost 1.75 or higher (1.71 already fails)
 
-# Installation
- * Ubunta 20.XX    
+# Testing
+ * VS 2015, Boost 1.75
+ * VS 2022, Boost 1.81
+ * GCC 9.4, Boost 1.80
+ 
+# Installation on Ubunta 20 or higher
  * Additional libraries
 	``` bash
-	sudo apt install \
-		build-essential gdb \
-		libboost-dev \
+    sudo apt install \
+        build-essential gdb \
+        libboost-dev \
         libasio-dev \
-		libssl-dev
+        libssl-dev
 	```
 
  * Install modern boost
@@ -71,12 +75,7 @@ This code is part of the TMS software.
     sudo ./b2 install
     ```
 
- * VS Code
+ * Build test
 	``` bash
-	wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-    sudo apt update
-    sudo apt install software-properties-common apt-transport-https wget
-    sudo apt install code
+    make
 	```
-	Install plugin "C/C++ IntelliSense, debugging, and code browsing"
