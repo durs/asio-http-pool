@@ -6,6 +6,7 @@ HTTP clients pool for bulk requests in asynchronous mode.
 This code is part of the TMS software.
 
 # Usage
+ * Simple example
 	``` C++    
     // declare asio thread pool and client http pool
     using namespace tms;
@@ -23,8 +24,7 @@ This code is part of the TMS software.
         }
         std::cout << " body[len: " << resp.body().size() << "]"
     });
-    
-    
+        
 	```
 
 # Additional
@@ -46,14 +46,14 @@ This code is part of the TMS software.
         throw std::runtime_error("uri parse/split algoritms failed");
     };
 	```
-    
+
 # Requires
  * C++14, C++17 or higher
  * Boost 1.75 or higher (1.71 already fails)
-    
+
 # Installation
  * Ubunta 20.XX    
- * Additional libraries (for modern Boost see bellow)
+ * Additional libraries
 	``` bash
 	sudo apt install \
 		build-essential gdb \
@@ -61,6 +61,16 @@ This code is part of the TMS software.
         libasio-dev \
 		libssl-dev
 	```
+
+ * Install modern boost
+    ``` bash
+    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz
+    tar xvf boost_1_80_0.tar.gz
+    cd boost_1_80_0
+    ./bootstrap.sh --prefix=/usr/
+    sudo ./b2 install
+    ```
+
  * VS Code
 	``` bash
 	wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
@@ -70,12 +80,3 @@ This code is part of the TMS software.
     sudo apt install code
 	```
 	Install plugin "C/C++ IntelliSense, debugging, and code browsing"
-
-# Install modern boost
-	``` bash
-    wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz
-    tar xvf boost_1_80_0.tar.gz
-    cd boost_1_80_0
-    ./bootstrap.sh --prefix=/usr/
-    sudo ./b2 install
-    ```
