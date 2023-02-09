@@ -47,14 +47,13 @@ void create_request() {
     optional<https_method> https;
     if (uri.scheme == "https") {
 #ifndef ASIO_POOL_HTTPS_IGNORE
-        https.emplace(https_method::tlsv12_client);
+        https.emplace(https_method::tls_client);
 #endif
     }
     
     reqcnt++;
     auto time = std::chrono::system_clock::now();
-    pool.enqueue<http_string_body>(uri.host, uri.port, uri.fullpath, https, [time, uristr](http_error err, http_stage stage, http_string_response&& resp) {
-        
+    pool.enqueue<http_string_body>(uri.host, uri.port, uri.fullpath, https, [time, uristr](http_error err, http_stage stage, http_string_response&& resp) {        
         std::cout << ">>> " + uristr << std::endl;
         
         std::cout << "    http ";
@@ -62,8 +61,7 @@ void create_request() {
             std::cout << resp.result_int() << " " << resp.result();
         }
         if (err) {
-            std::cout << " error[" << err << "] " << err.message();
-
+            std::cout << "error[" << err << "] " << err.message();
         }
         else {
             std::chrono::duration<double> tm = std::chrono::system_clock::now() - time;
@@ -77,8 +75,10 @@ void create_request() {
         auto stats = pool.get_stats();
         std::cout << "    queue: " << --reqcnt << "/" << stats.queue_size 
             << "; connects: " << stats.active_count << "/" << (stats.active_count + stats.inactive_count) 
-            << "; " << (int)stats.bandwidth << " byte/s]";
-        std::cout << std::endl;
+            << "; errors: " << stats.error_count
+            << "; " << (stats.bandwidth / 1024) << " KB/s]";
+
+        std::cout << std::endl << std::endl;
     });
 };
 

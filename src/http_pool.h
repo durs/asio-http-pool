@@ -9,6 +9,7 @@ namespace tms {
         size_t active_count = 0;
         size_t inactive_count = 0;
         size_t queue_size = 0;
+        size_t error_count = 0;
         size_t bytes_written = 0;
         size_t bytes_readed = 0;
         double total_seconds = 0;
@@ -106,6 +107,7 @@ namespace tms {
                     auto client_stats = client->get_stats(reset);
                     (client_stats.state > 0 ? stats.active_count : stats.inactive_count)++;
                     stats.queue_size += client_stats.queue_size;
+                    stats.error_count += client_stats.error_count;
                     stats.bytes_readed += client_stats.bytes_readed;
                     stats.bytes_written += client_stats.bytes_written;
                     stats.total_seconds += client_stats.total_seconds;

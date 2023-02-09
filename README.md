@@ -56,7 +56,7 @@ This code is part of the TMS software.
  * VS 2022, Boost 1.81
  * GCC 9.4, Boost 1.80
  
-# Installation on Ubunta 20 or higher
+# Installation on Ubuntu 20 or higher
  * Additional libraries
 	``` bash
     sudo apt install \

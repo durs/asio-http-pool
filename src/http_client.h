@@ -139,8 +139,8 @@ namespace tms {
                 ((stage == http_stage_write) ? stats.bytes_written : stats.bytes_readed) += bytes;
             }
             if (complete) {
-                auto tmout = std::chrono::duration_cast<std::chrono::seconds>(system_clock::now() - started).count();
-                stats.total_seconds += tmout * 1000;
+                std::chrono::duration<double/*, std::milli*/> tmout = system_clock::now() - started;
+                stats.total_seconds += tmout.count();
                 stats.total_requests++;
                 stats.queue_size = requests.size();
             }
