@@ -54,7 +54,7 @@ D_CFLAGS = -g -O0 -DDEBUG
 
 #--------------------------------------------------
 
-#$(info >>>>> $(R_OBJS))
+$(info >>>>> MAKE: $(TARGET))
 
 #--------------------------------------------------
 # declare rules
@@ -64,44 +64,44 @@ all: release
 rebuild: clean all
 
 release: prepare_release ${R_TARGET}
-    ${info ---> complete release}
+	${info ---> complete release}
 
 debug: prepare_debug ${D_TARGET}
-    ${info ---> complete debug}
+	${info ---> complete debug}
 
 prepare_release:
-    ${info ---> prepare release}
-    @mkdir -p $(R_OUTDIR)/$(SRCDIR) $(R_OUTDIR)/$(TESTDIR)
+	${info ---> prepare release}
+	@mkdir -p $(R_OUTDIR)/$(SRCDIR) $(R_OUTDIR)/$(TESTDIR)
 
 prepare_debug:
-    ${info ---> prepare debug}
-    @mkdir -p $(D_OUTDIR)/$(SRCDIR) $(D_OUTDIR)/$(TESTDIR)
+	${info ---> prepare debug}
+	@mkdir -p $(D_OUTDIR)/$(SRCDIR) $(D_OUTDIR)/$(TESTDIR)
 
 clean:
-    rm -r $(OUTDIR)
+	rm -r $(OUTDIR)
 
 # make release target executable
 $(R_TARGET): $(R_OBJS)
-    ${info ---> make release: $@}
-    $(CXX) -o $@.exe $(R_OBJS) $(LDFLAGS)
+	${info ---> make release: $@}
+	$(CXX) -o $@.exe $(R_OBJS) $(LDFLAGS)
 
 # make debug target executable
 $(D_TARGET): $(D_OBJS)
-    ${info ---> make debug: $@}
-    $(CXX) -o $@.exe $(D_OBJS) $(LDFLAGS)
+	${info ---> make debug: $@}
+	$(CXX) -o $@.exe $(D_OBJS) $(LDFLAGS)
 
 # compile release object files
 ${R_OUTDIR}/$(SRCDIR)/%.opp: $(SRCDIR)/%.cpp
-    ${info ---> compile release: $@}
-    $(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+	${info ---> compile release: $@}
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
 ${R_OUTDIR}/$(TESTDIR)/%.opp: $(TESTDIR)/%.cpp
-    ${info ---> compile release: $@}
-    $(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+	${info ---> compile release: $@}
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(R_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
 
 # compile debug object files
 ${D_OUTDIR}/$(SRCDIR)/%.opp: ${SRCDIR}/%.cpp
-    ${info ---> compile debug: $@}
-    $(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+	${info ---> compile debug: $@}
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
 ${D_OUTDIR}/$(TESTDIR)/%.opp: ${TESTDIR}/%.cpp
-    ${info ---> compile debug: $@}
-    $(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
+	${info ---> compile debug: $@}
+	$(CXX) -o $@ $(CFLAGS) $(CPPFLAGS) $(D_CFLAGS) $(DEFS) $(INCS) $(LDRS) $<
