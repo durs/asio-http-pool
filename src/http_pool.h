@@ -14,6 +14,7 @@ namespace tms {
         size_t bytes_readed = 0;
         double total_seconds = 0;
         double bandwidth = 0;
+        double interval = 0;
     };
 
     class http_client_pool :
@@ -96,11 +97,18 @@ namespace tms {
 
         http_pool_stats get_stats() {
             http_pool_stats stats;
+            get_stats(stats);
+            return std::move(stats);
+        }
+
+        bool get_stats(http_pool_stats &stats, int tmsec = 0) {
             std::lock_guard<std::mutex> lock(mutex);
             auto curr_time = system_clock::now();
-            auto tmout = std::chrono::duration_cast<std::chrono::seconds>(curr_time - stats_time).count();
-            auto reset = tmout > http_timeouts::stats;
+            auto tmout = std::chrono::duration<double>(curr_time - stats_time).count();
+            auto reset = tmout > (tmsec <= 0 ? http_timeouts::stats : tmsec);
             if (reset) stats_time = curr_time;
+            else if (tmsec > 0) return false;
+
             for (auto& ptr : clients) {
                 stats.host_count++;
                 for (auto& client : ptr.second) {
@@ -116,7 +124,8 @@ namespace tms {
             if (stats.total_seconds > 0.) {
                 stats.bandwidth = (stats.bytes_readed + stats.bytes_written) / stats.total_seconds;
             }
-            return stats;
+            stats.interval = tmout;
+            return true;
         }
 
     private:

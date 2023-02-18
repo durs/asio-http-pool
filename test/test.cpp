@@ -58,7 +58,7 @@ void create_request() {
         
         std::cout << "    http ";
         if (stage >= http_stage_read) {
-            std::cout << resp.result_int() << " " << resp.result();
+            std::cout << resp.result_int() << " " << resp.reason();
         }
         if (err) {
             std::cout << "error[" << err << "] " << err.message();

@@ -17,7 +17,7 @@ This code is part of the TMS software.
     pool.enqueue<http_string_body>("exemple.com", "80", "/test", nullopt, [](http_error err, http_stage stage, http_string_response&& resp){
         std::cout << "http ";
         if (stage >= http_stage_read) {
-            std::cout << resp.result_int() << " " << resp.result();
+            std::cout << resp.result_int() << " " << resp.reason();
         }
         if (err) {
             std::cout << " error[" << err << "] " << err.message();
