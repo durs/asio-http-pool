@@ -98,7 +98,7 @@ namespace tms {
         http_pool_stats get_stats() {
             http_pool_stats stats;
             get_stats(stats);
-            return std::move(stats);
+            return stats;
         }
 
         bool get_stats(http_pool_stats &stats, int tmsec = 0) {

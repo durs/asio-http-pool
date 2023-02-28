@@ -48,7 +48,7 @@ This code is part of the TMS software.
 	```
 
 # Requires
- * C++14, C++17 or higher
+ * C++17 or higher
  * Boost 1.75 or higher (1.71 already fails)
 
 # Testing
