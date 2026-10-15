@@ -8,7 +8,6 @@
 #include <chrono>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/asio/strand.hpp>
-#include <boost/asio/deadline_timer.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/beast/http.hpp>
@@ -34,6 +33,10 @@
 #include <boost/optional.hpp>
 #include <boost/utility/string_view_fwd.hpp>
 
+#endif
+
+#if (BOOST_VERSION < 107400) 
+#error boost version must be 1.74 or higher see BOOST_LIB_VERSION
 #endif
 
 namespace tms {

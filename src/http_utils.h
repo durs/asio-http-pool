@@ -1,6 +1,12 @@
 #pragma once
 #include "http_base.h"
 
+#ifdef BOOST_ASIO_HAS_STD_CHRONO
+#include <chrono>
+#else
+#include <boost/asio/deadline_timer.hpp>
+#endif
+
 namespace tms {
 
     //---------------------------------------------------------------------------------------------
@@ -9,9 +15,18 @@ namespace tms {
     class async_timer {
     public:
         typedef std::function<void()> handler_type;
+        
+#ifdef BOOST_ASIO_HAS_STD_CHRONO
+        using steady_timer = boost::asio::steady_timer;
+        using time_duration = std::chrono::steady_clock::duration;
+        using seconds = std::chrono::seconds;
+        using milliseconds = std::chrono::milliseconds;
+#else
+        using steady_timer = asio::deadline_timer;
         using time_duration = boost::posix_time::time_duration;
         using seconds = boost::posix_time::seconds;
         using milliseconds = boost::posix_time::milliseconds;
+#endif
 
         explicit async_timer(const asio::any_io_executor& ex)
             : timer(ex)
@@ -26,14 +41,18 @@ namespace tms {
         }
         bool wait_next() {
             if (!handler) return false;
+#ifdef BOOST_ASIO_HAS_STD_CHRONO
+            timer.expires_after(duration);
+#else
             timer.expires_from_now(duration);
+#endif
             timer.async_wait([h = handler](boost::system::error_code err) {
                 if (!err) h();
             });
             return true;
         }
     private:
-        asio::deadline_timer timer;
+        steady_timer timer;
         time_duration duration;
         handler_type handler;
     };
